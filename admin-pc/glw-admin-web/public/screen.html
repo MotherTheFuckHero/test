@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;margin:0;padding:0;overflow: hidden;">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="jquery-2.1.4.js"></script>
+	<style type="text/css">
+	   iframe {
+	      margin:0;
+		  padding:0;
+		  border:none !important 
+	   }
+	</style>
+</head>
+<body style="height: 100%;margin:0;padding:0;overflow: hidden;">
+
+<script type="text/javascript">
+
+$(function(){
+    var token="";
+    $.ajax({  
+		url: 'http://124.126.224.49:8082/tetris-user/api/report/auto/layout/auth/do/username/password/login?username=mims&password=VmpGYWExSnRWa1pOV0VaVlZrVktVRlpyV25KUFVUMDk',  
+		type: "post",  
+		//dataType: "jsonp",  
+		//jsonp: "callback",  
+		success: function (data) {  
+			console.log(data.data);  
+			token=data.data;
+			connectWebSocket("ws://124.126.224.49:8087/server/websocket/"+token);
+			queryAll();
+		}  
+	});
+	
+	
+	function queryAll(){
+		
+		$.ajax({  
+			url: 'http://124.126.224.49:8082/tetris-mims/api/report/auto/layout/query/all',  
+			type: "post",  
+			//dataType: "jsonp",  
+			//jsonp: "callback",  
+			beforeSend: function (XMLHttpRequest) {
+			   XMLHttpRequest.setRequestHeader("tetris-001",token);
+		    },
+			success: function (data) {  
+				console.log(data.data);  
+				//queryById(data.data[0].id);
+				initPage(data.data);
+				
+			}  
+		});
+	}
+	
+	function initPage(layouts){
+		
+		for(var i=0;i<layouts.length;i++){
+		    var html=[];
+			var enableStyle="";
+			if(!layouts[i].enable){
+			   enableStyle="display:none";
+			}
+			if(layouts[i].displayRow==1&&layouts[i].displayColumn==1){
+		       html.push('<div class="layoutFrame" id="layout-'+layouts[i].id+'" style="width:100%;height:100%;'+enableStyle+'">');
+			   html.push('<iframe width="100%" height="100%" src=""></iframe>');
+			   html.push('</div>');
+			}else{
+			   html.push('<div class="layoutFrame" id="layout-'+layouts[i].id+'" style="width:100%;height:100%;'+enableStyle+'">');
+			   html.push('<iframe style="float:left" width="50%" height="50%" src=""></iframe>');
+			   html.push('<iframe style="float:left" width="50%" height="50%" src=""></iframe>');
+			   html.push('<iframe style="float:left" width="50%" height="50%" src=""></iframe>');
+			   html.push('<iframe style="float:left" width="50%" height="50%" src=""></iframe>');
+			   html.push('</div>');
+			}
+			$('body').append(html.join('')); 
+			initIframe(layouts[i]);
+		}
+		
+	}
+	function initIframe(layout){
+	   $.ajax({  
+			url: 'http://124.126.224.49:8082/tetris-mims/api/report/auto/layout/query/by/id',  
+			type: "post",
+			data:{id:layout.id}, 
+			beforeSend: function (XMLHttpRequest) {
+			   XMLHttpRequest.setRequestHeader("tetris-001",token);
+		    },
+			success: function (data) {  
+				console.log(data.data);
+				var frames=$('#layout-'+layout.id+' iframe');
+				for(var i=0;i<frames.length;i++){
+				   $(frames[i]).attr('src',data.data.displaySplits[i].menuLink.replace('{context:token}',token))
+				}
+			}  
+		});
+	}
+	
+    var websocket = null;
+	function connectWebSocket(url){
+		//判断当前浏览器是否支持WebSocket
+		//判断当前浏览器是否支持WebSocket
+		if ('WebSocket'in window) {
+			websocket = new WebSocket(url);
+		} else {
+			alert('当前浏览器不支持websocket');
+		}
+
+		//连接发生错误的回调方法
+		websocket.onerror = function() {
+			console.log("error");
+		};
+
+		//接收到消息的回调方法
+		websocket.onmessage = function(event) {
+			console.log(event.data);
+			
+			if(event.data.indexOf('layoutId')!=-1){
+			   var message=JSON.parse(event.data);
+			   $('.layoutFrame').hide();
+			   var contentJson=JSON.parse(message.content);
+			   $('#layout-'+contentJson.layoutId).show();
+			}
+		}
+
+		//连接关闭的回调方法
+		websocket.onclose = function() {
+			console.log("Loc MSG:关闭连接");
+		}
+		
+		websocket.onopen = function() {
+			console.log("open");
+			websocket.send("topics:['mims.aa123456.report.auto.layout.change']");
+		};
+
+		//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+		window.onbeforeunload = function() {
+			websocket.close();
+		}
+	}
+	
+	
+
+
+});
+</script>
+</body>
+</html>

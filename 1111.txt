@@ -1,0 +1,21 @@
+
+后台管理：
+http://gitlab.guolaiwan.net/glw-web-mini/glw-admin-web.git
+
+PC官网：
+http://gitlab.guolaiwan.net/glw-web-mini/glw-pc-web.git
+
+1、git工具、拉取上面两个项目代码到你自己电脑的glw。
+把这两个项目推送到你自己的gitee的仓库。
+简单的修改一些代码，学习怎么提交代码到远程仓库。
+
+2、webstrom工具、了解这个工具跟vs的区别，怎么使用。
+在学习通过webstrom工具自带的git如何拉取项目。
+
+3、用webstrom工具打开项目，如何初始化项目，运行项目能够在本地打开网页查看
+
+4、开始研究两个前端vue项目，整体的目录结构，如何找对应的页面或某个位置。
+研究整体项目配置，包括各个配置文件是怎么使用的，路由，接口，页面之间相互引用，组件
+
+5、仿照pc首页，自己在elementUI里找类似的组件，做这个页面
+     仿照后台管理的用户页面，自己找类似组件，做页面

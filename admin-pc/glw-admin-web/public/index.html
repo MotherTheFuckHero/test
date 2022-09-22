@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= webpackConfig.name %></title>
+  </head>
+  <body>
+  <script type="text/javascript">
+      window._AMapSecurityConfig = {
+          securityJsCode:'e5fc43048b387759ae55af4df477f6a6',
+      }
+  </script>
+  <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=00bda2449ca0a8e3164e1431e9decc5e"></script>
+  <script type="text/javascript" src="https://webapi.amap.com/demos/js/liteToolbar.js"></script>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
+<style>
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+</style>
